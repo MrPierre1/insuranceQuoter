@@ -1,0 +1,22 @@
+{
+  "name": "dictionary-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "nodeserver.js",
+  "scripts": {
+    "test": "./node_modules/.bin/nightwatch --config nightwatch.conf.BASIC"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "chromedriver": "^2.37.0",
+    "express": "^4.16.3",
+    "nightwatch": "^0.9.20",
+    "vue": "^2.5.16"
+  },
+  "devDependencies": {
+    "vue-test-utils": "^1.0.0-beta.11",
+    "selenium-server": "^3.8.1"
+  }
+}

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Welcome to a simple Vue dictionary</title>
+  <script src="node_modules/vue/dist/vue.js"></script>
+  <script src="node_modules/axios/dist/axios.min.js"></script>
+  <script src="node_modules/axios/dist/axios.min.js"></script>
+  <script src="data/dictionary.json" type="text/javascript"></script>
+  <style media="screen">
+    body {
+      background-color: rgb(16, 180, 153);
+
+    }
+
+    .title {
+      text-align: center;
+    }
+
+    #app {
+      position: absolute;
+      width: 100%;
+      height: 200px;
+      top: 50%;
+      left: 0%;
+      margin: -100px 0 0 0px;
+    }
+
+    .resultsBox {
+      color: rgb(7, 2, 68);
+      height: 200px;
+      width: 75%;
+      background-color: #333;
+      border-radius: 5px;
+      margin: 0 auto;
+    }
+
+    .resultsBox h2 {
+      color: white;
+      text-align: center;
+    }
+
+    .textfield {
+      border: 5px solid rgb(0, 71, 44);
+      border-radius: 25px;
+      width: 300px;
+      height: 50px;
+      font-size: 20px;
+      text-align: center;
+      margin-left: 42%;
+    }
+
+    input:focus {
+      background-color: rgb(227, 230, 230);
+      outline: 0;
+    }
+
+    div img {
+      width: 25%;
+      margin-left: 38%;
+    }
+
+    .pastWords {
+      text-align: center
+    }
+
+    .pastWords h1 {
+      color: #333;
+    }
+    .pastWords li {
+      margin: 0 auto;
+      list-style: none;
+      cursor: pointer;
+    }
+
+    @media only screen and (max-width: 850px) {
+      body {
+        background-color: lightblue;
+
+      }
+      .textfield {
+        margin-left: 30%;
+
+      }
+
+    }
+
+  </style>
+</head>
+
+<body>
+  <div class="title">
+    <h1>Simple Dictionary</h1>
+  </div>
+
+  <div>
+    <img class="logo" src="assets/vuejs-logo.png" alt="Vue logo">
+  </div>
+
+  <div id="app">
+    <div>
+      <input type="text" placeholder="Enter a word and hit return" class="textfield" v-model="searchTerm" @keyup.enter="submit"
+      />
+      <div class="resultsBox">
+        <h2 v-if="results">{{results}}</h2>
+        <h2 v-else>Please enter a word in the search field</h2>
+      </div>
+
+      <div class="pastWords">
+        <h1>Past Searched Words</h1>
+        <ul v-for="item in history">
+          <li @click="searchHistory(item)">
+            <h2>
+              <a href="#">{{item}}</a>
+            </h2>
+          </li>
+        </ul>
+
+      </div>
+    </div>
+  </div>
+  <script>
+    var app = new Vue({
+      el: '#app',
+      data: {
+        greeting: 'Simple Dictionary',
+        searchTerm: '',
+        results: '',
+        wordList: [],
+        history: JSON.parse(localStorage.getItem('historyList')) || [],
+        url: "http://localhost:5000/getWord",
+        dataFile: ''
+      },
+      mounted: function () {
+        //When the vue is mounted, get dictionary and add it to localstorage
+        axios.get('data/dictionary.json').then(data => {
+          localStorage.setItem("words", data.data);
+          this.dataFile = data.data
+        })
+      },
+      methods: {
+        submit: function () {
+          //Update search term to uppercase
+          this.searchTerm = this.searchTerm.toUpperCase();
+          //find the search word and assign it to result
+          this.results = this.dataFile[this.searchTerm]
+          //if word is not found return
+          if(!this.results){
+            this.results = "We could not find your word, please try another"
+            return;
+          }
+          //if word is in histiry list, return dont add it to the history list
+          if(this.history.includes(this.searchTerm)){
+            return;
+          }
+          // if new word is not in passed search words add it to the list of search words
+          this.history.push(this.searchTerm)
+          localStorage.setItem('historyList', JSON.stringify(this.history))
+        },
+        searchHistory: function (item) {
+          //If the word is in the history list then show the definition
+          if (this.history.includes(item)) {
+            this.results = this.dataFile[item]
+          }
+        }
+      }
+    })
+
+  </script>
+</body>
+
+</html>
