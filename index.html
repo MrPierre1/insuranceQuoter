@@ -170,36 +170,49 @@
       </div>
 
 
-<div v-if="philResults">
-  <h1>Phil</h1>
-  <table style="width:100%">
-    <tr>
-      <th>Gender:</th>
-      <td>{{gender}}</td>
-    </tr>
-    <tr>
-      <th>Age:</th>
-      <td>{{age}}</td>
-    </tr>
-    <tr>
-      <th>Policy Amount:</th>
-      <td>${{amount}}</td>
-    </tr>
-    <tr v-if="issued">
-      <th>Issued:</th>
-      <td>{{issued}}</td>
-    </tr>
-    <tr v-if="smoke">
-      <th>Smoker:</th>
-      <td>{{smoke}}</td>
-    </tr>
-    <tr>
-      <th>Price:</th>
-      <td>${{philResults}}</td>
-    </tr>
-  </table>
+      <div v-if="philResults">
+        <h1>Philadelphia</h1>
+        <table style="width:100%">
+          <tr>
+            <th>Gender:</th>
+            <td>{{gender}}</td>
+          </tr>
+          <tr>
+            <th>Age:</th>
+            <td>{{age}}</td>
+          </tr>
+          <tr>
+            <th>Policy Amount:</th>
+            <td>${{amount}}</td>
+          </tr>
+          <tr v-if="issued">
+            <th>Issued:</th>
+            <td>{{issued}}</td>
+          </tr>
+          <tr v-if="smoke">
+            <th>Smoker:</th>
+            <td>{{smoke}}</td>
+          </tr>
+          <tr>
+            <th>Price:</th>
+            <td>${{philResults}}</td>
+          </tr>
+          <tr v-if="annualPay">
+            <th>Annual Pay:</th>
+            <td>${{annualPay}}</td>
+          </tr>
+          <tr v-if="semiMonthly">
+            <th>Semi monthly Pay:</th>
+            <td>${{semiMonthly}}</td>
+          </tr>
+          <tr v-if="monthly">
+            <th>Monthly Pay:</th>
+            <td>${{monthly}}</td>
+          </tr>
 
-</div>
+        </table>
+
+      </div>
 
 
     </div>
@@ -222,9 +235,12 @@
         issued: '',
         amount: '',
         errors: [],
-        philData: '', 
+        philData: '',
         aigResults: '',
-        philResults: ''
+        philResults: '',
+        annualPay: '',
+        semiMonthly: '',
+        monthly: ''
       },
       mounted: function () {
         //When the vue is mounted, get dictionary and add it to localstorage
@@ -283,42 +299,52 @@
           ][this.gender][this.age])
           this.philResults = this.philData[this.issued][this.smoke][this.gender][this.age]
 
-
-          //.for phill
-
-          //monthly
-          // (price * amount/1000) + 35 * .09 
-
-          //semi monthly
- // (price * amount/1000) + 35 * .536
-
- //anually 
- //semi monthly // (price * amount/1000) + 35
+          this.monthly = ( (this.amount * this.philResults / 1000) + 35) * .09
 
 
+        this.semiMonthly = (  (this.amount * this.philResults / 1000) + 35) * .536
+
+        this.annualPay = (this.amount * this.philResults / 1000) + 35
+
+
+        console.log("Annual PAy", this.monthly, this.semiMonthly, this.annualPay)
+        //.for phill
+
+        //monthly
+        // (price * amount/1000) + 35 * .09 
+
+        //(((19.91 * 10000)/1000)+35)*.09
+
+        //semi monthly
+        // (price * amount/1000) + 35 * .536
+
+        //anually 
+        //semi monthly // (price * amount/1000) + 35
 
 
 
 
-        },
-
-        deleteItem: function (item) {
-          // this.searchLis
-          this.groceries = localStorage.getItem('groceries')
-          var index = this.searchList.indexOf(item)
-          this.searchList.splice(index, 1);
-          console.log("glist", this.searchList)
-          localStorage.setItem('groceries', JSON.stringify(this.searchList))
 
 
-        },
-        searchHistory: function (item) {
-          //If the word is in the history list then show the definition
-          if (this.history.includes(item)) {
-            this.results = this.dataFile[item]
-          }
+      },
+
+      deleteItem: function (item) {
+        // this.searchLis
+        this.groceries = localStorage.getItem('groceries')
+        var index = this.searchList.indexOf(item)
+        this.searchList.splice(index, 1);
+        console.log("glist", this.searchList)
+        localStorage.setItem('groceries', JSON.stringify(this.searchList))
+
+
+      },
+      searchHistory: function (item) {
+        //If the word is in the history list then show the definition
+        if (this.history.includes(item)) {
+          this.results = this.dataFile[item]
         }
       }
+    }
     })
   </script>
 </body>
