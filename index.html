@@ -1,57 +1,43 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-  <title>Welcome to a simple Vue dictionary</title>
+  <title>Welcome to a simple search list</title>
   <script src="node_modules/vue/dist/vue.js"></script>
   <script src="node_modules/axios/dist/axios.min.js"></script>
-  <script src="node_modules/axios/dist/axios.min.js"></script>
-  <script src="data/dictionary.json" type="text/javascript"></script>
   <style media="screen">
     body {
-      background-color: rgb(16, 180, 153);
-
+      background-color: rgb(233, 232, 227);
     }
 
-    .title {
-      text-align: center;
-    }
-
-    #app {
-      position: absolute;
+    table {
+      font-family: arial, sans-serif;
+      border-collapse: collapse;
       width: 100%;
-      height: 200px;
-      top: 50%;
-      left: 0%;
-      margin: -100px 0 0 0px;
     }
 
-    .resultsBox {
-      color: rgb(7, 2, 68);
-      height: 200px;
-      width: 75%;
-      background-color: #333;
-      border-radius: 5px;
-      margin: 0 auto;
+    td,
+    th {
+      border: 1px solid #dddddd;
+      text-align: left;
+      padding: 8px;
     }
 
-    .resultsBox h2 {
-      color: white;
+    select {
+
+      border: 1px solid #ccc;
+      font-size: 16px;
+      height: 34px;
+      width: 10%;
+    }
+
+    .title h1 {
+      color: rgb(10, 19, 48);
       text-align: center;
     }
 
-    .textfield {
-      border: 5px solid rgb(0, 71, 44);
-      border-radius: 25px;
-      width: 300px;
-      height: 50px;
-      font-size: 20px;
-      text-align: center;
-      margin-left: 42%;
-    }
-
-    input:focus {
-      background-color: rgb(227, 230, 230);
-      outline: 0;
+    .important {
+      color: red;
     }
 
     div img {
@@ -59,37 +45,33 @@
       margin-left: 38%;
     }
 
-    .pastWords {
-      text-align: center
+    label {
+      font: 20px;
+      font-weight: bold;
     }
 
-    .pastWords h1 {
-      color: #333;
-    }
-    .pastWords li {
-      margin: 0 auto;
-      list-style: none;
-      cursor: pointer;
+    button {
+      border: 1px solid red;
+      height: 35px;
     }
 
-    @media only screen and (max-width: 850px) {
-      body {
-        background-color: lightblue;
-
-      }
-      .textfield {
-        margin-left: 30%;
-
-      }
-
+    input {
+      border: 1px solid #ccc;
+      font-size: 16px;
+      height: 34px;
+      width: 10%;
     }
 
+    tr td {
+      margin-left: 50px;
+    }
   </style>
 </head>
 
 <body>
   <div class="title">
-    <h1>Simple Dictionary</h1>
+    <h1>Search List</h1>
+
   </div>
 
   <div>
@@ -98,63 +80,237 @@
 
   <div id="app">
     <div>
-      <input type="text" placeholder="Enter a word and hit return" class="textfield" v-model="searchTerm" @keyup.enter="submit"
-      />
-      <div class="resultsBox">
-        <h2 v-if="results">{{results}}</h2>
-        <h2 v-else>Please enter a word in the search field</h2>
-      </div>
+      <!-- <input type="text" placeholder="Enter a search item" v-model="item" @keyup.enter="submit" -->
+      <!-- /> -->
+      <h1>Search</h1>
+      <p class="important">
+        <i>Please enter a value for age and gender and press search.</i>
+      </p>
 
-      <div class="pastWords">
-        <h1>Past Searched Words</h1>
-        <ul v-for="item in history">
-          <li @click="searchHistory(item)">
-            <h2>
-              <a href="#">{{item}}</a>
-            </h2>
-          </li>
+
+
+      <p v-if="errors.length">
+        <b>Please correct the following error(s):</b>
+        <ul>
+          <li v-for="error in errors">{{ error }}</li>
         </ul>
+      </p>
+
+
+      <label for="basic-dropdown">Gender: </label>
+      <select v-model="gender" required>
+        <option disabled value="">Please select one</option>
+        <option>Male</option>
+        <option>Female</option>
+      </select>
+
+      <label for="basic-dropdown">Age: </label>
+      <input type="number" placeholder="age" v-model="age" required/>
+
+
+      <label for="basic-dropdown">Amount: </label>
+      <input type="number" placeholder="$" v-model="amount" required/>
+
+
+
+      <label for="basic-dropdown">Smoker?: </label>
+      <select v-model="smoke">
+        <option disabled value="">Please select one</option>
+        <option>Smoker</option>
+        <option>Non-smoker</option>
+      </select>
+
+
+      <label for="basic-dropdown">Issued: </label>
+      <select v-model="issued">
+        <option disabled value="">Please select one</option>
+        <option>Standard</option>
+        <option>Modified</option>
+      </select>
+
+
+      <button @click="search">Search</button>
+      <hr>
+      <!-- <table>
+        <tr>
+          <th>Gender</th>
+          <th>Age</th>
+          <th>$5000</th>
+          <th>$10000</th>
+          <th>$15000</th>
+
+        </tr>
+        <tr v-for="item in results">
+          <td>{{item}}</td>
+          <td>{{item.ten}}</td>
+          <td>{{item.fifthteen}}</td>
+      </table> -->
+
+      <div v-if="aigResults">
+        <h1>AIG</h1>
+        <table style="width:100%">
+          <tr>
+            <th>Gender:</th>
+            <td>{{gender}}</td>
+          </tr>
+          <tr>
+            <th>Age:</th>
+            <td>{{age}}</td>
+          </tr>
+          <tr>
+            <th>Policy Amount:</th>
+            <td>${{amount}}</td>
+          </tr>
+          <tr>
+            <th>Price:</th>
+            <td>${{aigResults}}</td>
+          </tr>
+        </table>
 
       </div>
+
+
+<div v-if="philResults">
+  <h1>Phil</h1>
+  <table style="width:100%">
+    <tr>
+      <th>Gender:</th>
+      <td>{{gender}}</td>
+    </tr>
+    <tr>
+      <th>Age:</th>
+      <td>{{age}}</td>
+    </tr>
+    <tr>
+      <th>Policy Amount:</th>
+      <td>${{amount}}</td>
+    </tr>
+    <tr v-if="issued">
+      <th>Issued:</th>
+      <td>{{issued}}</td>
+    </tr>
+    <tr v-if="smoke">
+      <th>Smoker:</th>
+      <td>{{smoke}}</td>
+    </tr>
+    <tr>
+      <th>Price:</th>
+      <td>${{philResults}}</td>
+    </tr>
+  </table>
+
+</div>
+
+
     </div>
+
   </div>
   <script>
     var app = new Vue({
       el: '#app',
       data: {
-        greeting: 'Simple Dictionary',
-        searchTerm: '',
+        item: '',
+        searchList: JSON.parse(localStorage.getItem('groceries')) || [],
+        groceries: '',
+        walmartResults: '',
+        policyData: '',
+        smoke: '',
+        age: '',
+        gender: '',
         results: '',
-        wordList: [],
-        history: JSON.parse(localStorage.getItem('historyList')) || [],
-        url: "http://localhost:5000/getWord",
-        dataFile: ''
+        femaleResults: '',
+        issued: '',
+        amount: '',
+        errors: [],
+        philData: '', 
+        aigResults: '',
+        philResults: ''
       },
       mounted: function () {
         //When the vue is mounted, get dictionary and add it to localstorage
-        axios.get('data/dictionary.json').then(data => {
-          localStorage.setItem("words", data.data);
-          this.dataFile = data.data
+        axios.get('data.json').then(data => {
+          localStorage.setItem("dataPolicy", data.data);
+          this.policyData = data.data
+          console.log('pdaata  ', this.policyData)
+          // this.results = this.policyData
+        })
+
+        axios.get('phil.json').then(data => {
+          localStorage.setItem("philData", data.data);
+          this.philData = data.data
+          console.log('philData', this.philData)
         })
       },
+
       methods: {
-        submit: function () {
-          //Update search term to uppercase
-          this.searchTerm = this.searchTerm.toUpperCase();
-          //find the search word and assign it to result
-          this.results = this.dataFile[this.searchTerm]
-          //if word is not found return
-          if(!this.results){
-            this.results = "We could not find your word, please try another"
+
+
+        search: function () {
+
+          this.errors = [];
+          if (!this.age) this.errors.push("Age required.");
+          if (!this.gender)
+            this.errors.push("Gender required.");
+          if (!this.amount) this.errors.push("Amount required.");
+
+          if (this.errors.length) {
             return;
           }
-          //if word is in histiry list, return dont add it to the history list
-          if(this.history.includes(this.searchTerm)){
-            return;
+          // e.preventDefault();
+
+
+
+          if (this.amount <= 5000) {
+            this.amount = 5000
+          } else if (this.amount <= 10000) {
+            this.amount = 10000
+          } else {
+            this.amount = 15000
           }
-          // if new word is not in passed search words add it to the list of search words
-          this.history.push(this.searchTerm)
-          localStorage.setItem('historyList', JSON.stringify(this.history))
+
+          console.log("amount:: ", this.amount, this.age, this.gender, this.smoke);
+
+
+
+          // this.results = this.policyData[this.gender]
+          console.log("its 50", this.policyData[this.gender]);
+          console.log("its aged....", this.policyData[this.gender][this.age]);
+          this.aigResults = this.policyData[this.gender][this.age][this.amount]
+
+
+          console.log("new results", this.gender, this.smoke, this.age, "result", this.philData[this.issued][this
+            .smoke
+          ][this.gender][this.age])
+          this.philResults = this.philData[this.issued][this.smoke][this.gender][this.age]
+
+
+          //.for phill
+
+          //monthly
+          // (price * amount/1000) + 35 * .09 
+
+          //semi monthly
+ // (price * amount/1000) + 35 * .536
+
+ //anually 
+ //semi monthly // (price * amount/1000) + 35
+
+
+
+
+
+
+        },
+
+        deleteItem: function (item) {
+          // this.searchLis
+          this.groceries = localStorage.getItem('groceries')
+          var index = this.searchList.indexOf(item)
+          this.searchList.splice(index, 1);
+          console.log("glist", this.searchList)
+          localStorage.setItem('groceries', JSON.stringify(this.searchList))
+
+
         },
         searchHistory: function (item) {
           //If the word is in the history list then show the definition
@@ -164,7 +320,6 @@
         }
       }
     })
-
   </script>
 </body>
 
