@@ -1,49 +1,81 @@
-var config = require("../nightwatch.conf.BASIC.js");
-var app_url = "http://localhost:5000/";
+import { Selector } from "testcafe";
 
-module.exports = {
-  "I can search for a word": function(browser) {
-    browser.url(app_url).setValue("input", "dearth");
-    browser
-      .keys([browser.Keys.RETURN])
-      .assert.containsText("div h2", "Scarcity")
-      .assert.containsText("div ul li", "dearth".toUpperCase())
-      .end();
-  },
-  "I can search for word that doesnt exist": function(browser) {
-    browser.url(app_url).setValue("input", "wordThatDoesntExist");
-    browser
-      .keys([browser.Keys.RETURN])
-      .assert.containsText(
-        "div h2",
-        "We could not find your word, please try another"
-      )
-      .elements("css selector", "ul li", result => {
-        const numOfElements = result.value.length;
-        browser.assert.equal(numOfElements, 0);
-      })
-      .end();
-  },
-  "I can search for another word": function(browser) {
-    browser.url(app_url).setValue("input", "trophied");
-    browser
-      .keys([browser.Keys.RETURN])
-      .assert.containsText("div h2", "Adorned with trophies")
-      .assert.containsText("div ul li", "trophied".toUpperCase())
-      .end();
-  },
+fixture("Basic AIG Test").page("http://localhost:5000/");
 
-  "I can search history for my word": function(browser) {
-    browser.url(app_url).setValue("input", "trophied");
-    browser
-      .keys([browser.Keys.RETURN])
-      .clearValue("input")
-      .setValue("input", "dearth");
-    browser
-      .keys([browser.Keys.RETURN])
-      .click("li a")
-      .assert.containsText("div h2", "Adorned with trophies")
-      .assert.containsText("div ul li", "trophied".toUpperCase())
-      .end();
-  }
-};
+test("Find AIG", async t => {
+  const aboutLink = Selector("a").withText("About");
+  const firstFounder = Selector("b").withText("Ben Halpern");
+  const secondFounder = Selector("b").withText("Jess Lee");
+  const thirdFounder = Selector("#app > div > div > table > tbody > tr:nth-child(4)");
+
+  const citySelect = Selector(".gender");
+  const cityOption = citySelect.find("option");
+
+  const ageInput = Selector(".ageField");
+  const amountInput = Selector(".amount");
+  const submit = Selector(".submit");
+  
+  
+
+  await t
+    // .click('select')
+    // .click(Selector('option').filter('[value="Male"]'))
+     .click(citySelect)
+        .click(cityOption.withText('Male'))
+
+ 
+     .typeText(ageInput, '50')
+     .typeText(amountInput, '15000')
+   
+     
+    .click(submit)
+ 
+    .expect(thirdFounder.innerText).eql('Price:\t$76.89');
+     
+ 
+});
+test("Find Philly", async t => {
+  const aboutLink = Selector("a").withText("About");
+  const firstFounder = Selector("b").withText("Ben Halpern");
+  const secondFounder = Selector("b").withText("Jess Lee");
+  const thirdFounder = Selector(
+    "#app > div > div > table > tbody > tr:nth-child(4)"
+  );
+
+  const citySelect = Selector("select");
+  const smoke = Selector(".smoke");
+
+  const issued = Selector(".issued");
+
+  
+
+  const cityOption = citySelect.find("option");
+
+  const ageInput = Selector(".ageField");
+  const amountInput = Selector(".amount");
+  const submit = Selector(".submit");
+
+  await t
+    // .click('select')
+    // .click(Selector('option').filter('[value="Male"]'))
+    .click(citySelect)
+    .click(cityOption.withText("Male"))
+
+    .wait(1000)
+.click(smoke)
+    .click(smoke.withText("Smoker"))
+
+
+    .click(issued)
+    .click(issued.withText("Standard"))
+
+
+    .typeText(ageInput, "50")
+    .typeText(amountInput, "10000")
+    .wait(3000)
+
+    .click(submit)
+    .wait(3000)
+    .expect(thirdFounder.innerText)
+    .eql("Price:\t$51.92");
+});

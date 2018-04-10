@@ -98,23 +98,23 @@
 
 
       <label for="basic-dropdown">Gender: </label>
-      <select v-model="gender" required>
-        <option disabled value="">Please select one</option>
-        <option>Male</option>
-        <option>Female</option>
+      <select v-model="gender" required class="gender">
+        <!-- <option disabled value="">Please select one</option> -->
+        <option  selected>Male</option>
+        <option >Female</option>
       </select>
 
       <label for="basic-dropdown">Age: </label>
-      <input type="number" placeholder="age" v-model="age" required/>
+      <input type="number" class="ageField" placeholder="age" v-model="age" required/>
 
 
       <label for="basic-dropdown">Amount: </label>
-      <input type="number" placeholder="$" v-model="amount" required/>
+      <input type="number"  class="amount" placeholder="$" v-model="amount" required/>
 
 
 
       <label for="basic-dropdown">Smoker?: </label>
-      <select v-model="smoke">
+      <select v-model="smoke" class="smoke">
         <option disabled value="">Please select one</option>
         <option>Smoker</option>
         <option>Non-smoker</option>
@@ -122,29 +122,15 @@
 
 
       <label for="basic-dropdown">Issued: </label>
-      <select v-model="issued">
+      <select v-model="issued" class="issued">
         <option disabled value="">Please select one</option>
         <option>Standard</option>
         <option>Modified</option>
       </select>
 
 
-      <button @click="search">Search</button>
+      <button class="submit" @click="search">Search</button>
       <hr>
-      <!-- <table>
-        <tr>
-          <th>Gender</th>
-          <th>Age</th>
-          <th>$5000</th>
-          <th>$10000</th>
-          <th>$15000</th>
-
-        </tr>
-        <tr v-for="item in results">
-          <td>{{item}}</td>
-          <td>{{item.ten}}</td>
-          <td>{{item.fifthteen}}</td>
-      </table> -->
 
       <div v-if="aigResults">
         <h1>AIG</h1>
@@ -261,6 +247,7 @@
       methods: {
 
         getAgi: function () {
+
           this.errors = [];
           if (!this.age) this.errors.push("Age required.");
           if (!this.gender)
@@ -271,38 +258,80 @@
             return;
           }
 
-          if (this.amount <= 5 000) {
-            this.amount = 5 000
-          } else if (this.amount <= 1 0000) {
-            this.amount = 1 0000
+          if (this.amount <= 5000) {
+            this.amount = 5000
+          } else if (this.amount <= 10000) {
+            this.amount = 10000
           } else {
-            this.amount = 1
-            5000
+            this.amount = 15000
           }
-          console.log("amount:: ", this.amount, this.age, this.gender, this.smoke); //aig // // this.results=t his.policyData[this.gender]
-          // console.log( "its 50", this.policyData[this.gender]); // console.log( "its aged....", this.policyData[this.gender][this.age]);
-          // this.aigResults=t his.policyData[this.gender][this.age][this.amount]
+          console.log("AIG:: ", this.amount, this.age, this.gender, this.smoke); //aig // // this.results=t his.policyData[this.gender]
+          console.log( "its 50", this.policyData); //
+           console.log( "its aged....", this.policyData[this.gender][this.age]);
+      
+          
+          this.aigResults = this.policyData[this.gender][this.age][this.amount]
 
 
 
 
-        }
+        },
+        getPhil: function () {
+          this.errors = [];
+          if (!this.age) this.errors.push("Age required.");
+          if (!this.gender) this.errors.push("Gender required.");
+          if (!this.amount) this.errors.push("Amount required.");
+          if (this.errors.length) {
+            return;
+          }
+
+          // if(this.smoke)
+          // console.log("new results", this.gender, this.smoke, this.age, "result", this.philData[this.issued][this
+          //   .smoke
+          // ][this.gender][this.age])
+
+          this.philResults = this.philData[this.issued][this.smoke][this.gender][this.age]
+
+          this.monthly = ((this.amount * this.philResults / 1000) + 35) * .09
+          this.semiAnnually = ((this.amount * this.philResults / 1000) + 35) * .536
+          this.annualPay = (this.amount * this.philResults / 1000) + 35
+          console.log("Annual PAy", this.monthly, this.semiAnnually, this.annualPay)
+          if (this.issued === 'Standard') {
+            this.aigResults = ''
+          }
+
+
+
+        },
 
         search: function () {
 
-          this.errors = [];
-          if (!this.age) this.errors.push("Age required.");
-          if (!this.gender)
-            this.errors.push("Gender required.");
-          if (!this.amount) this.errors.push("Amount required.");
+            this.getAgi()
+          // this.errors = [];
+          // if (!this.age) this.errors.push("Age required.");
+          // if (!this.gender)
+          //   this.errors.push("Gender required.");
+          // if (!this.amount) this.errors.push("Amount required.");
 
-          if (this.errors.length) {
-            return;
-          }
+          // if (this.errors.length) {
+          //   return;
+          // }
           // e.preventDefault();
 
 
+//           if (this.issued === "Standard") {
 
+//             this.getPhil()
+//             console.log("CALLING PHIl");
+
+//           } else {
+//             this.getAgi()
+//             this.getPhil()
+
+//  console.log("CALLING PHIl and AGI");
+            
+
+          // }
           // if (this.amount <= 5000) {
           //   this.amount = 5000
           // } else if (this.amount <= 10000) {
@@ -321,13 +350,16 @@
           // this.aigResults = this.policyData[this.gender][this.age][this.amount]
 
           //phil
-          var maxAge = [76, 77, 78, 79, 80]
-          var maxAge2 = [81, 82, 83, 84, 85]
-          console.log()
-
-          if (this.issued === "Standard" && maxAge.includes(this.age) && this.amount > 10000) {
-            alert('Face amount than $10000')
-          }
+//           var maxAge = [76, 77, 78, 79, 80]
+//           var maxAge2 = [81, 82, 83, 84, 85]
+//           var tease = maxAge.includes(this.age)
+//           // console.log()
+// //  console.log("ifs",tease, typeof this.age, typeof maxAge[1] );
+//             this.age = parseInt(this.age)
+//           if (this.issued === "Standard" && maxAge.includes(this.age) && this.amount > 10000) {
+//             alert('Face amount than $10000')
+    
+//           }
           // if(this.amount > 10000){
           //   alert('Premium greater than $10000 not allowed')
           // }
@@ -335,22 +367,22 @@
 
 
 
-          console.log("new results", this.gender, this.smoke, this.age, "result", this.philData[this.issued][this
-            .smoke
-          ][this.gender][this.age])
-          this.philResults = this.philData[this.issued][this.smoke][this.gender][this.age]
+          // console.log("new results", this.gender, this.smoke, this.age, "result", this.philData[this.issued][this
+          //   .smoke
+          // ][this.gender][this.age])
+          // this.philResults = this.philData[this.issued][this.smoke][this.gender][this.age]
 
-          this.monthly = ((this.amount * this.philResults / 1000) + 35) * .09
+          // this.monthly = ((this.amount * this.philResults / 1000) + 35) * .09
 
-          this.semiAnnually = ((this.amount * this.philResults / 1000) + 35) * .536
+          // this.semiAnnually = ((this.amount * this.philResults / 1000) + 35) * .536
 
-          this.annualPay = (this.amount * this.philResults / 1000) + 35
+          // this.annualPay = (this.amount * this.philResults / 1000) + 35
 
-          console.log("Annual PAy", this.monthly, this.semiAnnually, this.annualPay)
+          // console.log("Annual PAy", this.monthly, this.semiAnnually, this.annualPay)
 
-          if (this.issued === 'Standard') {
-            this.aigResults = ''
-          }
+          // if (this.issued === 'Standard') {
+          //   this.aigResults = ''
+          // }
 
           //Math.round10(55.55, -1); // 55.6
 
