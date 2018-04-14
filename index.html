@@ -246,6 +246,11 @@
 
       methods: {
 
+      range: function (start, end) { 
+        return new Array(end - start).fill().map((d, i) => i + start)
+      },
+
+
         getAgi: function () {
 
           this.errors = [];
@@ -293,8 +298,19 @@
           this.philResults = this.philData[this.issued][this.smoke][this.gender][this.age]
 
           this.monthly = ((this.amount * this.philResults / 1000) + 35) * .09
-          this.semiAnnually = ((this.amount * this.philResults / 1000) + 35) * .536
+ this.monthly = (Math.round(this.monthly*100)/100);
+ this.semiAnnually = Math.round(( ((this.amount * this.philResults / 1000) + 35) * .536), 1)
+ this.semiAnnually = (Math.round(this.semiAnnually*100)/100);
+//  console.log(result1, "result1");
+ 
+//  console.log(this.semiAnnually.toPrecision(2));
+
           this.annualPay = (this.amount * this.philResults / 1000) + 35
+this.annualPay = (Math.round(this.annualPay*100)/100);
+
+//  console.log(result, "result");
+//  console.log(this.annualPay.toPrecision(2));
+          
           console.log("Annual PAy", this.monthly, this.semiAnnually, this.annualPay)
           if (this.issued === 'Standard') {
             this.aigResults = ''
@@ -306,7 +322,7 @@
 
         search: function () {
 
-            this.getAgi()
+            // this.getAgi()
           // this.errors = [];
           // if (!this.age) this.errors.push("Age required.");
           // if (!this.gender)
@@ -319,15 +335,16 @@
           // e.preventDefault();
 
 
-//           if (this.issued === "Standard") {
+          if (this.issued === "Standard") {
 
-//             this.getPhil()
-//             console.log("CALLING PHIl");
+            this.getPhil()
+            console.log("CALLING PHIl");
 
-//           } else {
-//             this.getAgi()
-//             this.getPhil()
-
+          } else {
+            this.getAgi()
+            this.getPhil()
+            
+          }
 //  console.log("CALLING PHIl and AGI");
             
 
@@ -350,16 +367,46 @@
           // this.aigResults = this.policyData[this.gender][this.age][this.amount]
 
           //phil
-//           var maxAge = [76, 77, 78, 79, 80]
+          var maxAge = [76, 77, 78, 79, 80]
+ var zeroto75 = this.range(0,75);
+ var seven6to80 = this.range(76,80);
+ var eithy1to85 = this.range(81,85);
+var test2 = ''
+//  var testfunc = function numberRange (start, end) { return new Array(end - start).fill().map((d, i) => test2 = i + start); }
+// 
+ 
+//  console.log("agre keeys",this.range(1,20), this.range(20,34))
 //           var maxAge2 = [81, 82, 83, 84, 85]
-//           var tease = maxAge.includes(this.age)
+ this.age = parseInt(this.age)
+          
+ if (this.age < 75 && this.issued==="Standard" && this.amount>25000) {
+ this.philResults = ''
+  alert('Face amount than $25000') 
+
+ } else if (this.age >= 75 && this.age<=80 && this.issued==="Standard" && this.amount > 10000) {
+ this.philResults = ''
+  alert('Face amount than $10000')
+  }
+ else if (this.age >= 81 && this.age<=85 && this.issued==="Standard" && this.amount > 5000){
+ this.philResults = ''
+  alert('Face amount than $5000')
+  }
+  else{
+    this.getPhil();
+  }
+  // var tease = seven6to80.includes(this.age)
+          
 //           // console.log()
-// //  console.log("ifs",tease, typeof this.age, typeof maxAge[1] );
-//             this.age = parseInt(this.age)
-//           if (this.issued === "Standard" && maxAge.includes(this.age) && this.amount > 10000) {
+//  console.log("ifs",tease, typeof tease, seven6to80[0], typeof seven6to80[0], typeof seven6to80, this.issued, typeof this.age, this.amount );
+//             // this.age = parseInt(this.age)
+//           if (this.issued === "Standard" && maxAge.includes(this.age) && this.amount >10000) {
 //             alert('Face amount than $10000')
-    
+//             this.philResults = ''
 //           }
+
+
+          
+
           // if(this.amount > 10000){
           //   alert('Premium greater than $10000 not allowed')
           // }
